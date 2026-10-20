@@ -6,91 +6,65 @@
 <title>Қазақ көтерілістері — Кроссворд</title>
 <style>
   :root {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface-hover: #334155;
-    --fg: #f8fafc;
-    --fg-muted: #94a3b8;
-    --line: #334155;
-    --cell: #1e293b;
-    --accent: #38bdf8;
-    --accent-glow: rgba(56, 189, 248, 0.4);
-    --success: #10b981;
-    --error: #f43f5e;
+    --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155;
+    --fg: #f8fafc; --fg-muted: #94a3b8; --line: #334155;
+    --cell: #1e293b; --accent: #38bdf8; --accent-glow: rgba(56, 189, 248, 0.4);
+    --success: #10b981; --error: #f43f5e;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
   body {
     background-color: var(--bg);
     background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg) 60%);
-    color: var(--fg);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+    color: var(--fg); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 20px 16px; display: flex; flex-direction: column;
+    align-items: center; min-height: 100vh;
   }
   .header {
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    background: var(--surface);
-    padding: 12px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%; max-width: 750px; display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 20px; background: var(--surface);
+    padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
   .timer { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); display: flex; align-items: center; gap: 8px; }
   .timer svg { width: 20px; height: 20px; stroke: var(--accent); }
   .progress-container { flex: 1; margin-left: 20px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); width: 0%; transition: width 0.3s ease; }
+  
   .table-wrap {
-    overflow-x: auto;
-    max-width: 100%;
-    padding: 12px;
-    margin-bottom: 24px;
-    background: var(--surface);
-    border-radius: 16px;
+    overflow-x: auto; max-width: 100%; padding: 12px; margin-bottom: 24px;
+    background: var(--surface); border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     touch-action: pan-x pan-y;
   }
   .table-wrap::-webkit-scrollbar { display: none; }
+  
   table { border-collapse: separate; border-spacing: 2px; margin: 0 auto; }
-  td { width: 36px; height: 36px; padding: 0; position: relative; background: transparent; }
-  @media (min-width: 400px) { td { width: 40px; height: 40px; } }
+  td { width: 30px; height: 30px; padding: 0; position: relative; background: transparent; }
+  @media (min-width: 500px) { td { width: 34px; height: 34px; } }
+  
   td.c {
-    background: var(--cell);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    transition: all 0.15s ease;
+    background: var(--cell); border: 1px solid var(--line);
+    border-radius: 4px; transition: all 0.15s ease;
   }
   td.c.active-word { background: #1e3a8a; border-color: #60a5fa; }
-  td.c:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-    background: #0f172a;
-    transform: scale(1.05);
-    z-index: 10;
-  }
+  td.c:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: #0f172a; transform: scale(1.05); z-index: 10; }
   td.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
   td.correct input { color: var(--success); }
   td.incorrect { border-color: var(--error); background: rgba(244, 63, 94, 0.1); }
   td.incorrect input { color: var(--error); }
+  
   td input {
     width: 100%; height: 100%; background: transparent; border: none;
-    color: #fff; text-align: center; font-size: 18px; font-weight: 700;
+    color: #fff; text-align: center; font-size: 15px; font-weight: 700;
     text-transform: uppercase; outline: none; padding: 0; caret-color: transparent;
   }
   td i {
-    position: absolute; top: 1px; left: 3px; font-size: 9px; font-style: normal;
+    position: absolute; top: 0px; left: 2px; font-size: 8px; font-style: normal;
     color: var(--fg-muted); font-weight: 800; pointer-events: none; opacity: 0.8; line-height: 1;
   }
+  
   .toolbar {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-    width: 100%; max-width: 600px; margin-bottom: 32px;
+    width: 100%; max-width: 750px; margin-bottom: 32px;
   }
   @media (min-width: 600px) { .toolbar { grid-template-columns: repeat(4, 1fr); } }
   button {
@@ -105,6 +79,7 @@
   button.primary:hover { background: #7dd3fc; color: #000; }
   button.check { border-color: var(--success); color: var(--success); }
   button.check:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
+  
   .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100;
@@ -121,7 +96,8 @@
   .modal-content h2 { color: var(--success); margin: 0 0 10px 0; font-size: 28px; }
   .modal-content p { color: var(--fg-muted); font-size: 16px; margin: 0 0 20px 0; }
   .modal-content .time-final { font-size: 36px; font-weight: bold; color: var(--accent); margin-bottom: 24px; }
-  .clues { width: 100%; max-width: 600px; display: grid; grid-template-columns: 1fr; gap: 16px; }
+  
+  .clues { width: 100%; max-width: 750px; display: grid; grid-template-columns: 1fr; gap: 16px; }
   @media (min-width: 768px) { .clues { grid-template-columns: 1fr 1fr; } }
   .clue-group { background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
   .clue-group h3 { color: var(--accent); font-size: 15px; margin: 0 0 16px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
@@ -129,6 +105,7 @@
   .clue { font-size: 14px; line-height: 1.5; margin-bottom: 12px; display: flex; gap: 10px; color: var(--fg-muted); }
   .clue:last-child { margin-bottom: 0; }
   .clue b { color: var(--accent); font-weight: 800; min-width: 20px; text-align: right; }
+
   @media print {
     body { background: #fff; color: #000; padding: 0; }
     .toolbar, .header { display: none; }
@@ -179,30 +156,63 @@
 </div>
 
 <script>
-// ТОЛЬКО 8 СЛОВ, ПЛОТНАЯ СЕТКА
+// Все 23 слова. Сетка плотная.
 const D = {
-  "R": 10,
-  "C": 14,
+  "R": 21,
+  "C": 21,
   "cells": {
-    // 1. НҰРАЛЫ (0,0-0,5) - горизонталь
-    "0,0":"Н","0,1":"Ұ","0,2":"Р","0,3":"А","0,4":"Л","0,5":"Ы",
-    // 2. АҚБҰЛАҚ (2,0-2,6) - горизонталь
-    "2,0":"А","2,1":"Қ","2,2":"Б","2,3":"Ұ","2,4":"Л","2,5":"А","2,6":"Қ",
-    // 3. АҚМОЛА (4,0-4,5) - горизонталь
-    "4,0":"А","4,1":"Қ","4,2":"М","4,3":"О","4,4":"Л","4,5":"А",
-    // 4. НАУРЫЗБАЙ (6,0-6,8) - горизонталь
-    "6,0":"Н","6,1":"А","6,2":"У","6,3":"Р","6,4":"Ы","6,5":"З","6,6":"Б","6,7":"А","6,8":"Й",
-    // 5. ЖАНТАЙ (8,0-8,5) - горизонталь
-    "8,0":"Ж","8,1":"А","8,2":"Н","8,3":"Т","8,4":"А","8,5":"Й",
-    // 6. ОРСК (0,12-0,15) - горизонталь (справа)
-    "0,12":"О","0,13":"Р","0,14":"С","0,15":"К",
-    // 7. ЖАҢАҚАЛА (2,8-2,15) - горизонталь (справа)
+    // 1. НҰРАЛЫ
+    "0,1":"Н","0,2":"Ұ","0,3":"Р","0,4":"А","0,5":"Л","0,6":"Ы",
+    // 2. АҚБҰЛАҚ
+    "2,1":"А","2,2":"Қ","2,3":"Б","2,4":"Ұ","2,5":"Л","2,6":"А","2,7":"Қ",
+    // 3. АҚМОЛА
+    "4,1":"А","4,2":"Қ","4,3":"М","4,4":"О","4,5":"Л","4,6":"А",
+    // 4. НАУРЫЗБАЙ
+    "6,1":"Н","6,2":"А","6,3":"У","6,4":"Р","6,5":"Ы","6,6":"З","6,7":"Б","6,8":"А","6,9":"Й",
+    // 5. ЖАНТАЙ
+    "8,1":"Ж","8,2":"А","8,3":"Н","8,4":"Т","8,5":"А","8,6":"Й",
+    // 6. ОРСК
+    "0,10":"О","0,11":"Р","0,12":"С","0,13":"К",
+    // 7. ЖАҢАҚАЛА
     "2,8":"Ж","2,9":"А","2,10":"Ң","2,11":"А","2,12":"Қ","2,13":"А","2,14":"Л","2,15":"А",
-    // 8. СПЕРАНСКИЙ (4,7-4,16) - горизонталь (справа)
-    "4,7":"С","4,8":"П","4,9":"Е","4,10":"Р","4,11":"А","4,12":"Н","4,13":"С","4,14":"К","4,15":"И","4,16":"Й"
+    // 8. СПЕРАНСКИЙ
+    "4,7":"С","4,8":"П","4,9":"Е","4,10":"Р","4,11":"А","4,12":"Н","4,13":"С","4,14":"К","4,15":"И","4,16":"Й",
+    // 9. ЖӘҢГІР
+    "5,17":"Ж","6,17":"Ә","7,17":"Ң","8,17":"Г","9,17":"І","10,17":"Р",
+    // 10. ЖАҢАЕЛЕК
+    "8,8":"Ж","8,9":"А","8,10":"Ң","8,11":"А","8,12":"Е","8,13":"Л","8,14":"Е","8,15":"К",
+    // 11. ШОҚАН
+    "10,1":"Ш","10,2":"О","10,3":"Қ","10,4":"А","10,5":"Н",
+    // 12. ОРЫНБОР
+    "12,1":"О","12,2":"Р","12,3":"Ы","12,4":"Н","12,5":"Б","12,6":"О","12,7":"Р",
+    // 13. ҚОҚАН
+    "10,13":"Қ","11,13":"О","12,13":"Қ","13,13":"А","14,13":"Н",
+    // 14. ОТАРШЫЛДЫҚ
+    "14,1":"О","14,2":"Т","14,3":"А","14,4":"Р","14,5":"Ш","14,6":"Ы","14,7":"Л","14,8":"Д","14,9":"Ы","14,10":"Қ",
+    // 15. ДОСАЙ
+    "16,1":"Д","16,2":"О","16,3":"С","16,4":"А","16,5":"Й",
+    // 16. КЕНЕСАРЫ
+    "16,7":"К","16,8":"Е","16,9":"Н","16,10":"Е","16,11":"С","16,12":"А","16,13":"Р","16,14":"Ы",
+    // 17. СЫРЫМ
+    "18,1":"С","18,2":"Ы","18,3":"Р","18,4":"Ы","18,5":"М",
+    // 18. МАХАМБЕТ
+    "18,7":"М","18,8":"А","18,9":"Х","18,10":"А","18,11":"М","18,12":"Б","18,13":"Е","18,14":"Т",
+    // 19. ИСАТАЙ
+    "20,1":"И","20,2":"С","20,3":"А","20,4":"Т","20,5":"А","20,6":"Й",
+    // 20. ЕСЕТ
+    "20,8":"Е","20,9":"С","20,10":"Е","20,11":"Т",
+    // 21. АБЫЛАЙ
+    "12,10":"А","12,11":"Б","12,12":"Ы","12,13":"Л","12,14":"А","12,15":"Й",
+    // 22. БӨКЕЙ
+    "8,16":"Б","8,17":"Ө","8,18":"К","8,19":"Е","8,20":"Й",
+    // 23. СЫРДАРИЯ
+    "6,12":"С","6,13":"Ы","6,14":"Р","6,15":"Д","6,16":"А","6,17":"Р","6,18":"И","6,19":"Я"
   },
   "nums": {
-    "0,0":1, "2,0":2, "4,0":3, "6,0":4, "8,0":5, "0,12":6, "2,8":7, "4,7":8
+    "0,1":1, "2,1":2, "4,1":3, "6,1":4, "8,1":5, "0,10":6, "2,8":7, "4,7":8, 
+    "5,17":9, "8,8":10, "10,1":11, "12,1":12, "10,13":13, "14,1":14, "16,1":15, 
+    "16,7":16, "18,1":17, "18,7":18, "20,1":19, "20,8":20, "12,10":21, 
+    "8,14":22, "6,12":23
   },
   "A": [
     [1, "Сырым «бұзау еті ауызында кеткен» деп сынаған, Кіші жүздің ханы?"],
@@ -212,7 +222,22 @@ const D = {
     [5, "Жанқожа 1856 жылы салған бекіністің аты?"],
     [6, "Есет Көтібарұлы шабуыл жасаған, Жайық бойындағы бекініс?"],
     [7, "Жанқожа 1856 жылы салған бекіністің аты?"],
-    [8, "1822 және 1824 жылғы жарлықтардың авторы?"]
+    [8, "1822 және 1824 жылғы жарлықтардың авторы?"],
+    [9, "Махамбет «Хан емессің, қасқырсың» деген Ішкі Орда ханы?"],
+    [10, "Сырдарияның арғы бетіндегі хандық?"],
+    [11, "Шыңғыс сұлтанның баласы, қазақтың тұңғыш ғалымы?"],
+    [12, "Жанқожа 1856 жылы салған бекіністің аты?"],
+    [13, "Сырдарияның арғы бетіндегі хандық?"],
+    [14, "Отаршылдыққа қарсы күрескен батыр?"],
+    [15, "1870 жылғы Маңғыстау көтерілісінің басшысы?"],
+    [16, "Кенесары хан?"],
+    [17, "Сырым батыр?"],
+    [18, "Махамбет?"],
+    [19, "Исатай?"],
+    [20, "Есет?"],
+    [21, "Абылай хан?"],
+    [22, "Бөкей?"],
+    [23, "Сырдария өзені?"]
   ],
   "D": []
 };
