@@ -6,32 +6,75 @@
 <title>Қазақ көтерілістері — Кроссворд</title>
 <style>
   :root {
-    --bg: #0b0e14;
-    --surface: #151a23;
-    --surface-hover: #1e2532;
-    --fg: #e2e8f0;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-hover: #334155;
+    --fg: #f8fafc;
     --fg-muted: #94a3b8;
     --line: #334155;
     --cell: #1e293b;
     --accent: #38bdf8;
-    --accent-glow: rgba(56, 189, 248, 0.3);
-    --success: #10b981; /* Зеленый */
-    --error: #ef4444;   /* Красный */
+    --accent-glow: rgba(56, 189, 248, 0.4);
+    --success: #10b981;
+    --error: #f43f5e;
+    --highlight: #3b82f6; /* Цвет выделенного слова */
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
 
   body {
     background-color: var(--bg);
-    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg) 70%);
+    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg) 60%);
     color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    padding: 24px 16px;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+  }
+
+  /* --- Шапка (Таймер и Прогресс) --- */
+  .header {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: var(--surface);
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .timer {
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .timer svg { width: 20px; height: 20px; stroke: var(--accent); }
+
+  .progress-container {
+    flex: 1;
+    margin-left: 20px;
+    height: 8px;
+    background: var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    width: 0%;
+    transition: width 0.3s ease;
   }
 
   /* --- Сетка --- */
@@ -40,43 +83,53 @@
     max-width: 100%;
     padding: 12px;
     margin-bottom: 24px;
-    scrollbar-width: none; 
     background: var(--surface);
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    touch-action: pan-x pan-y; /* Для мобильных */
   }
   .table-wrap::-webkit-scrollbar { display: none; }
 
   table { border-collapse: separate; border-spacing: 2px; margin: 0 auto; }
 
   td {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     position: relative;
     background: transparent;
   }
 
+  @media (min-width: 400px) {
+    td { width: 40px; height: 40px; }
+  }
+
   td.c {
     background: var(--cell);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 4px;
+    transition: all 0.15s ease;
   }
 
+  /* Подсветка активного слова */
+  td.c.active-word {
+    background: #1e3a8a; /* Темно-синий фон для слова */
+    border-color: #60a5fa;
+  }
+  
+  /* Подсветка выбранной клетки */
   td.c:focus-within {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
-    background: var(--surface-hover);
+    background: #0f172a;
     transform: scale(1.05);
     z-index: 10;
   }
 
-  /* Подсветка при проверке */
   td.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
   td.correct input { color: var(--success); }
   
-  td.incorrect { border-color: var(--error); background: rgba(239, 68, 68, 0.1); }
+  td.incorrect { border-color: var(--error); background: rgba(244, 63, 94, 0.1); }
   td.incorrect input { color: var(--error); }
 
   td input {
@@ -91,38 +144,42 @@
     text-transform: uppercase;
     outline: none;
     padding: 0;
-    caret-color: var(--accent);
+    caret-color: transparent; /* Убираем курсор, фокус виден по рамке */
   }
 
   td i {
     position: absolute;
-    top: 2px;
-    left: 4px;
-    font-size: 10px;
+    top: 1px;
+    left: 3px;
+    font-size: 9px;
     font-style: normal;
     color: var(--fg-muted);
     font-weight: 800;
     pointer-events: none;
     opacity: 0.8;
+    line-height: 1;
   }
 
   /* --- Кнопки --- */
   .toolbar {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     width: 100%;
     max-width: 600px;
     margin-bottom: 32px;
+  }
+
+  @media (min-width: 600px) {
+    .toolbar { grid-template-columns: repeat(4, 1fr); }
   }
 
   button {
     background: var(--surface);
     border: 1px solid var(--line);
     color: var(--fg);
-    padding: 12px 20px;
-    border-radius: 50px;
+    padding: 12px 16px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 14px;
     font-family: inherit;
@@ -130,7 +187,8 @@
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 6px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
   }
 
@@ -138,16 +196,48 @@
     background: var(--surface-hover);
     border-color: var(--accent);
     color: var(--accent);
-    transform: translateY(-2px);
   }
 
-  button:active { transform: translateY(0); }
-  
   button.primary { background: var(--accent); color: #000; border: none; }
   button.primary:hover { background: #7dd3fc; color: #000; }
   
   button.check { border-color: var(--success); color: var(--success); }
   button.check:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
+
+  /* --- Модальное окно победы --- */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .modal.show { display: flex; opacity: 1; }
+  
+  .modal-content {
+    background: var(--surface);
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 90%;
+    width: 400px;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-content h2 { color: var(--success); margin: 0 0 10px 0; font-size: 28px; }
+  .modal-content p { color: var(--fg-muted); font-size: 16px; margin: 0 0 20px 0; }
+  .modal-content .time-final { font-size: 36px; font-weight: bold; color: var(--accent); margin-bottom: 24px; }
 
   /* --- Секция вопросов --- */
   .clues {
@@ -155,7 +245,7 @@
     max-width: 600px;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 16px;
   }
 
   @media (min-width: 768px) {
@@ -167,12 +257,12 @@
     padding: 20px;
     border-radius: 16px;
     border: 1px solid var(--line);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   }
 
   .clue-group h3 {
     color: var(--accent);
-    font-size: 16px;
+    font-size: 15px;
     margin: 0 0 16px 0;
     font-weight: 800;
     text-transform: uppercase;
@@ -190,27 +280,21 @@
 
   .clue {
     font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 14px;
+    line-height: 1.5;
+    margin-bottom: 12px;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     color: var(--fg-muted);
   }
 
   .clue:last-child { margin-bottom: 0; }
-
-  .clue b {
-    color: var(--accent);
-    font-weight: 800;
-    min-width: 20px;
-    text-align: right;
-  }
+  .clue b { color: var(--accent); font-weight: 800; min-width: 20px; text-align: right; }
 
   /* --- Принт --- */
   @media print {
     body { background: #fff; color: #000; padding: 0; }
-    .toolbar { display: none; }
-    .table-wrap { box-shadow: none; background: none; padding: 0; }
+    .toolbar, .header { display: none; }
+    .table-wrap { box-shadow: none; background: none; padding: 0; border: none; }
     td.c { background: #fff; border-color: #000; }
     td input { color: #000; }
     td i { color: #555; }
@@ -218,24 +302,38 @@
     .clue-group h3 { color: #000; }
     .clue { color: #333; }
     .clue b { color: #000; }
-    td.correct, td.incorrect { background: #fff; border-color: #000; }
+    td.correct, td.incorrect, td.active-word { background: #fff; border-color: #000; }
     td.correct input, td.incorrect input { color: #000; }
   }
 </style>
 </head>
 <body>
 
+<!-- Шапка -->
+<div class="header">
+  <div class="timer">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="timeDisplay">00:00</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</div>
+
+<!-- Сетка -->
 <div class="table-wrap">
   <div id="grid"></div>
 </div>
 
+<!-- Кнопки -->
 <div class="toolbar">
-  <button class="check" onclick="check()">✅ Тексеру</button>
-  <button class="primary" onclick="rev()">✨ Жауаптарды көрсету</button>
-  <button onclick="clr()">🧹 Тазалау</button>
-  <button onclick="window.print()">🖨️ Басып шығару</button>
+  <button class="check" onclick="checkAnswers()">✅ Тексеру</button>
+  <button class="primary" onclick="showAnswers()">💡 Жауаптар</button>
+  <button onclick="hint()">🪄 Көмек</button>
+  <button onclick="clearAll()">🧹 Тазалау</button>
 </div>
 
+<!-- Вопросы -->
 <div class="clues">
   <div class="clue-group">
     <h3>Көлденең</h3>
@@ -247,7 +345,18 @@
   </div>
 </div>
 
+<!-- Модалка победы -->
+<div class="modal" id="winModal">
+  <div class="modal-content">
+    <h2>🎉 Керемет!</h2>
+    <p>Сіз кроссвордты толығымен дұрыс шештіңіз!</p>
+    <div class="time-final" id="finalTime">00:00</div>
+    <button class="primary" onclick="closeModal()" style="width: 100%;">Жабу</button>
+  </div>
+</div>
+
 <script>
+// Данные кроссворда (сетка и вопросы)
 const D = {
   "R": 12,
   "C": 10,
@@ -284,74 +393,262 @@ const D = {
   ]
 };
 
-const g = document.getElementById('grid');
-let t = document.createElement('table');
+// Переменные состояния
+let startTime = Date.now();
+let timerInterval;
+let isGameWon = false;
+let inputs = [];
+let gridMap = {}; // Для быстрого поиска клеток по координатам
 
-for (let r=0; r<D.R; r++) {
-  let tr = t.insertRow();
-  for (let c=0; c<D.C; c++) {
-    let td = tr.insertCell(), k = r+','+c;
-    if (D.cells[k]) {
-      td.className = 'c';
-      td.innerHTML = (D.nums[k] ? '<i>'+D.nums[k]+'</i>' : '') + '<input maxlength="1" autocomplete="off" spellcheck="false" data-a="'+D.cells[k]+'">';
+// Инициализация
+function init() {
+  buildGrid();
+  buildClues();
+  startTimer();
+  calculateProgress();
+}
+
+// Построение сетки
+function buildGrid() {
+  const g = document.getElementById('grid');
+  let t = document.createElement('table');
+
+  for (let r=0; r<D.R; r++) {
+    let tr = t.insertRow();
+    for (let c=0; c<D.C; c++) {
+      let td = tr.insertCell(), k = r+','+c;
+      if (D.cells[k]) {
+        td.className = 'c';
+        td.dataset.r = r;
+        td.dataset.c = c;
+        
+        const num = D.nums[k] ? '<i>'+D.nums[k]+'</i>' : '';
+        const input = `<input maxlength="1" autocomplete="off" spellcheck="false" data-a="${D.cells[k]}" data-r="${r}" data-c="${c}">`;
+        
+        td.innerHTML = num + input;
+        gridMap[k] = td;
+      }
     }
   }
-}
-g.appendChild(t);
+  g.appendChild(t);
 
-const I = [...document.querySelectorAll('input')];
-I.forEach((inp, idx) => {
-  // Сброс цветов при вводе
-  inp.addEventListener('input', () => {
-    inp.value = inp.value.toUpperCase().slice(-1);
-    inp.parentElement.classList.remove('correct', 'incorrect');
-    if (inp.value && I[idx+1]) I[idx+1].focus();
-  });
+  inputs = [...document.querySelectorAll('input')];
   
-  inp.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace' && !inp.value && idx > 0) {
-        inp.parentElement.classList.remove('correct', 'incorrect');
-        I[idx-1].focus();
-    }
-  });
-});
-
-// Кнопка ПРОВЕРКИ
-function check() {
-  I.forEach(inp => {
+  // Навешиваем события на каждую клетку
+  inputs.forEach(inp => {
+    const r = parseInt(inp.dataset.r);
+    const c = parseInt(inp.dataset.c);
     const td = inp.parentElement;
-    td.classList.remove('correct', 'incorrect'); // Сброс старых цветов
     
-    if (!inp.value) {
-       // Если пусто, можно ничего не красить или покрасить в красный
-       return; 
-    }
+    // Фокус: подсветка всего слова
+    inp.addEventListener('focus', () => {
+      clearHighlights();
+      highlightWord(r, c, 'across'); // По умолчанию горизонталь
+    });
+
+    // Ввод буквы
+    inp.addEventListener('input', (e) => {
+      inp.value = inp.value.toUpperCase().slice(-1);
+      td.classList.remove('correct', 'incorrect');
+      
+      if (inp.value) {
+        // Переход к следующей клетке в слове (по горизонтали или вертикали)
+        moveToNextInput(r, c);
+      }
+      calculateProgress();
+      checkWin();
+    });
+
+    // Обработка клавиш
+    inp.addEventListener('keydown', (e) => {
+      let nextR = r, nextC = c;
+      
+      if (e.key === 'ArrowRight') nextC++;
+      else if (e.key === 'ArrowLeft') nextC--;
+      else if (e.key === 'ArrowDown') nextR++;
+      else if (e.key === 'ArrowUp') nextR--;
+      else if (e.key === 'Backspace' && !inp.value) {
+        // Если пусто, удаляем предыдущую
+        e.preventDefault();
+        const prev = getPrevInput(r, c);
+        if (prev) { prev.focus(); prev.value = ''; prev.parentElement.classList.remove('correct', 'incorrect'); }
+        return;
+      } else return;
+
+      const nextKey = nextR + ',' + nextC;
+      if (gridMap[nextKey]) {
+        e.preventDefault();
+        gridMap[nextKey].querySelector('input').focus();
+      }
+    });
+
+    // Клик по клетке: определить направление (если пересечение)
+    inp.addEventListener('click', () => {
+      // Простая логика: если есть слово справа или слева - горизонталь, иначе вертикаль
+      const hasRight = gridMap[r+','+(c+1)] || gridMap[r+','+(c-1)];
+      clearHighlights();
+      highlightWord(r, c, hasRight ? 'across' : 'down');
+    });
+  });
+}
+
+// Вспомогательные функции навигации
+function moveToNextInput(r, c) {
+  // Пытаемся сдвинуться вправо
+  let next = gridMap[r+','+(c+1)];
+  if (next && next.querySelector('input').value === '') {
+    next.querySelector('input').focus(); return;
+  }
+  // Если справа пусто/стена, пытаемся вниз
+  next = gridMap[(r+1)+','+c];
+  if (next && next.querySelector('input').value === '') {
+    next.querySelector('input').focus(); return;
+  }
+  // Иначе ищем любую следующую пустую клетку
+  const currentIdx = inputs.indexOf(document.activeElement);
+  for (let i = currentIdx + 1; i < inputs.length; i++) {
+    if (!inputs[i].value) { inputs[i].focus(); return; }
+  }
+}
+
+function getPrevInput(r, c) {
+  // Логика обратная
+  let prev = gridMap[r+','+(c-1)];
+  if (prev) return prev.querySelector('input');
+  prev = gridMap[(r-1)+','+c];
+  if (prev) return prev.querySelector('input');
+  return null;
+}
+
+// Подсветка слова
+function highlightWord(r, c, direction) {
+  let curr = gridMap[r+','+c];
+  if (!curr) return;
+
+  // Идем влево/вверх до начала слова
+  let startR = r, startC = c;
+  if (direction === 'across') {
+    while (gridMap[startR+','+(startC-1)]) startC--;
+  } else {
+    while (gridMap[(startR-1)+','+startC]) startR--;
+  }
+
+  // Идем вправо/вниз до конца, подсвечивая
+  let currR = startR, currC = startC;
+  while (gridMap[currR+','+currC]) {
+    gridMap[currR+','+currC].classList.add('active-word');
+    if (direction === 'across') currC++;
+    else currR++;
+  }
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.active-word').forEach(el => el.classList.remove('active-word'));
+}
+
+// --- Таймер ---
+function startTimer() {
+  timerInterval = setInterval(() => {
+    if (isGameWon) return;
+    const diff = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timeDisplay').innerText = formatTime(diff);
+  }, 1000);
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+// --- Прогресс ---
+function calculateProgress() {
+  const total = inputs.length;
+  const filled = inputs.filter(i => i.value !== '').length;
+  const percent = (filled / total) * 100;
+  document.getElementById('progressBar').style.width = percent + '%';
+}
+
+// --- Кнопки ---
+function checkAnswers() {
+  inputs.forEach(inp => {
+    const td = inp.parentElement;
+    td.classList.remove('correct', 'incorrect');
+    if (!inp.value) return; // Пустые не трогаем
     
-    if (inp.value === inp.dataset.a) {
-      td.classList.add('correct'); // Правильно (зеленый)
-    } else {
-      td.classList.add('incorrect'); // Неправильно (красный)
-    }
+    if (inp.value === inp.dataset.a) td.classList.add('correct');
+    else td.classList.add('incorrect');
   });
 }
 
-function rev(){ 
-  I.forEach(i => {
-    i.value = i.dataset.a;
-    i.parentElement.classList.remove('correct', 'incorrect');
+function showAnswers() {
+  inputs.forEach(inp => {
+    inp.value = inp.dataset.a;
+    inp.parentElement.classList.remove('correct', 'incorrect');
   });
+  calculateProgress();
+  // Не вызываем checkWin(), чтобы не триггерить победу при показе ответов
 }
 
-function clr(){ 
-  I.forEach(i => {
-    i.value = '';
-    i.parentElement.classList.remove('correct', 'incorrect');
-  });
+function hint() {
+  // Находим все пустые или неправильные клетки
+  const wrongInputs = inputs.filter(inp => !inp.value || inp.value !== inp.dataset.a);
+  if (wrongInputs.length === 0) {
+    alert("Барлығы дұрыс! 🎉");
+    return;
+  }
+  // Выбираем случайную
+  const randomInp = wrongInputs[Math.floor(Math.random() * wrongInputs.length)];
+  randomInp.value = randomInp.dataset.a;
+  randomInp.parentElement.classList.add('correct');
+  calculateProgress();
+  randomInp.focus();
+  // Скрываем ошибку при вводе
+  randomInp.addEventListener('input', () => randomInp.parentElement.classList.remove('correct'), { once: true });
+  checkWin();
 }
 
-const f = (l, id) => document.getElementById(id).innerHTML = l.map(x => '<div class="clue"><b>'+x[0]+'.</b><span>'+x[1]+'</span></div>').join('');
-f(D.A, 'a'); 
-f(D.D, 'd');
+function clearAll() {
+  inputs.forEach(inp => {
+    inp.value = '';
+    inp.parentElement.classList.remove('correct', 'incorrect');
+  });
+  calculateProgress();
+  isGameWon = false;
+  startTime = Date.now();
+  document.getElementById('timeDisplay').innerText = "00:00";
+}
+
+// --- Победа ---
+function checkWin() {
+  if (isGameWon) return;
+  const allFilled = inputs.every(i => i.value === i.dataset.a);
+  if (allFilled) {
+    isGameWon = true;
+    clearInterval(timerInterval);
+    const diff = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('finalTime').innerText = formatTime(diff);
+    document.getElementById('winModal').classList.add('show');
+  }
+}
+
+function closeModal() {
+  document.getElementById('winModal').classList.remove('show');
+}
+
+// --- Вопросы ---
+function buildClues() {
+  const render = (list, id) => {
+    document.getElementById(id).innerHTML = list.map(x => 
+      `<div class="clue"><b>${x[0]}.</b><span>${x[1]}</span></div>`
+    ).join('');
+  };
+  render(D.A, 'a');
+  render(D.D, 'd');
+}
+
+// Запуск
+init();
 </script>
 </body>
 </html>
