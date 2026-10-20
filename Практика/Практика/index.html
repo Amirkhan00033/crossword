@@ -15,6 +15,8 @@
     --cell: #1e293b;
     --accent: #38bdf8;
     --accent-glow: rgba(56, 189, 248, 0.3);
+    --success: #10b981; /* Зеленый */
+    --error: #ef4444;   /* Красный */
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -69,6 +71,13 @@
     transform: scale(1.05);
     z-index: 10;
   }
+
+  /* Подсветка при проверке */
+  td.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
+  td.correct input { color: var(--success); }
+  
+  td.incorrect { border-color: var(--error); background: rgba(239, 68, 68, 0.1); }
+  td.incorrect input { color: var(--error); }
 
   td input {
     width: 100%;
@@ -133,8 +142,12 @@
   }
 
   button:active { transform: translateY(0); }
+  
   button.primary { background: var(--accent); color: #000; border: none; }
   button.primary:hover { background: #7dd3fc; color: #000; }
+  
+  button.check { border-color: var(--success); color: var(--success); }
+  button.check:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
 
   /* --- Секция вопросов --- */
   .clues {
@@ -205,6 +218,8 @@
     .clue-group h3 { color: #000; }
     .clue { color: #333; }
     .clue b { color: #000; }
+    td.correct, td.incorrect { background: #fff; border-color: #000; }
+    td.correct input, td.incorrect input { color: #000; }
   }
 </style>
 </head>
@@ -215,6 +230,7 @@
 </div>
 
 <div class="toolbar">
+  <button class="check" onclick="check()">✅ Тексеру</button>
   <button class="primary" onclick="rev()">✨ Жауаптарды көрсету</button>
   <button onclick="clr()">🧹 Тазалау</button>
   <button onclick="window.print()">🖨️ Басып шығару</button>
@@ -232,35 +248,20 @@
 </div>
 
 <script>
-// ИДЕАЛЬНО КРАСИВАЯ СЕТКА
 const D = {
   "R": 12,
   "C": 10,
   "cells": {
-    // === ГОРИЗОНТАЛЬНЫЕ ===
-    // 1. НҰРАЛЫ (0,0-0,5) 
     "0,0":"Н","0,1":"Ұ","0,2":"Р","0,3":"А","0,4":"Л","0,5":"Ы",
-    // 2. АҚМОЛА (2,0-2,6)
     "2,0":"А","2,1":"Қ","2,2":"М","2,3":"О","2,4":"Л","2,5":"А","2,6":"А",
-    // 3. ЖАНТАЙ (4,0-4,5)
     "4,0":"Ж","4,1":"А","4,2":"Н","4,3":"Т","4,4":"А","4,5":"Й",
-    // 4. ОРСК (6,0-6,3)
     "6,0":"О","6,1":"Р","6,2":"С","6,3":"К",
-    // 5. ЖАҢАҚАЛА (7,0-7,7)
     "7,0":"Ж","7,1":"А","7,2":"Ң","7,3":"А","7,4":"Қ","7,5":"А","7,6":"Л","7,7":"А",
-    // 6. СПЕРЕНСКИЙ (8,0-8,9)
     "8,0":"С","8,1":"П","8,2":"Е","8,3":"Р","8,4":"Е","8,5":"Н","8,6":"С","8,7":"К","8,8":"И","8,9":"Й",
-    // 7. ШАҚАН (10,2-10,6)
     "10,2":"Ш","10,3":"О","10,4":"Қ","10,5":"А","10,6":"Н",
-
-    // === ВЕРТИКАЛЬНЫЕ ===
-    // 8. ҚОҚАН (3,6-7,6)
     "3,6":"Қ","4,6":"О","5,6":"Қ","6,6":"А","7,6":"Н",
-    // 9. ЖӘҢГІР (0,8-5,8)
     "0,8":"Ж","1,8":"Ә","2,8":"Ң","3,8":"Г","4,8":"І","5,8":"Р",
-    // 10. ДОСАН (0,4-4,4)
     "0,4":"Д","1,4":"О","2,4":"С","3,4":"А","4,4":"Н",
-    // 11. БАЙ (2,2-9,2)
     "2,2":"Б","3,2":"А","4,2":"Й","5,2":"А","6,2":"А","7,2":"А","8,2":"А","9,2":"А"
   },
   "nums": {
@@ -300,17 +301,53 @@ g.appendChild(t);
 
 const I = [...document.querySelectorAll('input')];
 I.forEach((inp, idx) => {
+  // Сброс цветов при вводе
   inp.addEventListener('input', () => {
     inp.value = inp.value.toUpperCase().slice(-1);
+    inp.parentElement.classList.remove('correct', 'incorrect');
     if (inp.value && I[idx+1]) I[idx+1].focus();
   });
+  
   inp.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace' && !inp.value && idx > 0) I[idx-1].focus();
+    if (e.key === 'Backspace' && !inp.value && idx > 0) {
+        inp.parentElement.classList.remove('correct', 'incorrect');
+        I[idx-1].focus();
+    }
   });
 });
 
-function rev(){ I.forEach(i => i.value = i.dataset.a); }
-function clr(){ I.forEach(i => i.value = ''); }
+// Кнопка ПРОВЕРКИ
+function check() {
+  I.forEach(inp => {
+    const td = inp.parentElement;
+    td.classList.remove('correct', 'incorrect'); // Сброс старых цветов
+    
+    if (!inp.value) {
+       // Если пусто, можно ничего не красить или покрасить в красный
+       return; 
+    }
+    
+    if (inp.value === inp.dataset.a) {
+      td.classList.add('correct'); // Правильно (зеленый)
+    } else {
+      td.classList.add('incorrect'); // Неправильно (красный)
+    }
+  });
+}
+
+function rev(){ 
+  I.forEach(i => {
+    i.value = i.dataset.a;
+    i.parentElement.classList.remove('correct', 'incorrect');
+  });
+}
+
+function clr(){ 
+  I.forEach(i => {
+    i.value = '';
+    i.parentElement.classList.remove('correct', 'incorrect');
+  });
+}
 
 const f = (l, id) => document.getElementById(id).innerHTML = l.map(x => '<div class="clue"><b>'+x[0]+'.</b><span>'+x[1]+'</span></div>').join('');
 f(D.A, 'a'); 
