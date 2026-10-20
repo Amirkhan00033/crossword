@@ -17,11 +17,8 @@
     --accent-glow: rgba(56, 189, 248, 0.4);
     --success: #10b981;
     --error: #f43f5e;
-    --highlight: #3b82f6;
   }
-
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-
   body {
     background-color: var(--bg);
     background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg) 60%);
@@ -34,10 +31,9 @@
     align-items: center;
     min-height: 100vh;
   }
-
   .header {
     width: 100%;
-    max-width: 650px;
+    max-width: 600px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,13 +43,10 @@
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-
   .timer { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); display: flex; align-items: center; gap: 8px; }
   .timer svg { width: 20px; height: 20px; stroke: var(--accent); }
-
   .progress-container { flex: 1; margin-left: 20px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); width: 0%; transition: width 0.3s ease; }
-
   .table-wrap {
     overflow-x: auto;
     max-width: 100%;
@@ -65,21 +58,16 @@
     touch-action: pan-x pan-y;
   }
   .table-wrap::-webkit-scrollbar { display: none; }
-
   table { border-collapse: separate; border-spacing: 2px; margin: 0 auto; }
-
   td { width: 36px; height: 36px; padding: 0; position: relative; background: transparent; }
   @media (min-width: 400px) { td { width: 40px; height: 40px; } }
-
   td.c {
     background: var(--cell);
     border: 1px solid var(--line);
     border-radius: 4px;
     transition: all 0.15s ease;
   }
-
   td.c.active-word { background: #1e3a8a; border-color: #60a5fa; }
-  
   td.c:focus-within {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
@@ -87,29 +75,24 @@
     transform: scale(1.05);
     z-index: 10;
   }
-
   td.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
   td.correct input { color: var(--success); }
   td.incorrect { border-color: var(--error); background: rgba(244, 63, 94, 0.1); }
   td.incorrect input { color: var(--error); }
-
   td input {
     width: 100%; height: 100%; background: transparent; border: none;
     color: #fff; text-align: center; font-size: 18px; font-weight: 700;
     text-transform: uppercase; outline: none; padding: 0; caret-color: transparent;
   }
-
   td i {
     position: absolute; top: 1px; left: 3px; font-size: 9px; font-style: normal;
     color: var(--fg-muted); font-weight: 800; pointer-events: none; opacity: 0.8; line-height: 1;
   }
-
   .toolbar {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-    width: 100%; max-width: 650px; margin-bottom: 32px;
+    width: 100%; max-width: 600px; margin-bottom: 32px;
   }
   @media (min-width: 600px) { .toolbar { grid-template-columns: repeat(4, 1fr); } }
-
   button {
     background: var(--surface); border: 1px solid var(--line); color: var(--fg);
     padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 14px;
@@ -122,7 +105,6 @@
   button.primary:hover { background: #7dd3fc; color: #000; }
   button.check { border-color: var(--success); color: var(--success); }
   button.check:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
-
   .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100;
@@ -139,17 +121,14 @@
   .modal-content h2 { color: var(--success); margin: 0 0 10px 0; font-size: 28px; }
   .modal-content p { color: var(--fg-muted); font-size: 16px; margin: 0 0 20px 0; }
   .modal-content .time-final { font-size: 36px; font-weight: bold; color: var(--accent); margin-bottom: 24px; }
-
-  .clues { width: 100%; max-width: 650px; display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .clues { width: 100%; max-width: 600px; display: grid; grid-template-columns: 1fr; gap: 16px; }
   @media (min-width: 768px) { .clues { grid-template-columns: 1fr 1fr; } }
-
   .clue-group { background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
   .clue-group h3 { color: var(--accent); font-size: 15px; margin: 0 0 16px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
   .clue-group h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .clue { font-size: 14px; line-height: 1.5; margin-bottom: 12px; display: flex; gap: 10px; color: var(--fg-muted); }
   .clue:last-child { margin-bottom: 0; }
   .clue b { color: var(--accent); font-weight: 800; min-width: 20px; text-align: right; }
-
   @media print {
     body { background: #fff; color: #000; padding: 0; }
     .toolbar, .header { display: none; }
@@ -200,45 +179,30 @@
 </div>
 
 <script>
-// ВАШИ СЛОВА (СТРОГО ПО СПИСКУ)
+// ТОЛЬКО 8 СЛОВ, ПЛОТНАЯ СЕТКА
 const D = {
-  "R": 13,
+  "R": 10,
   "C": 14,
   "cells": {
-    // 1. НҰРАЛЫ (0,0-0,5)
+    // 1. НҰРАЛЫ (0,0-0,5) - горизонталь
     "0,0":"Н","0,1":"Ұ","0,2":"Р","0,3":"А","0,4":"Л","0,5":"Ы",
-    // 2. АҚБҰЛАҚ (2,0-2,6)
+    // 2. АҚБҰЛАҚ (2,0-2,6) - горизонталь
     "2,0":"А","2,1":"Қ","2,2":"Б","2,3":"Ұ","2,4":"Л","2,5":"А","2,6":"Қ",
-    // 3. АҚМОЛА (4,0-4,5)
+    // 3. АҚМОЛА (4,0-4,5) - горизонталь
     "4,0":"А","4,1":"Қ","4,2":"М","4,3":"О","4,4":"Л","4,5":"А",
-    // 4. НАУРЫЗБАЙ (6,0-6,8)
+    // 4. НАУРЫЗБАЙ (6,0-6,8) - горизонталь
     "6,0":"Н","6,1":"А","6,2":"У","6,3":"Р","6,4":"Ы","6,5":"З","6,6":"Б","6,7":"А","6,8":"Й",
-    // 5. ЖАНТАЙ (8,0-8,5)
+    // 5. ЖАНТАЙ (8,0-8,5) - горизонталь
     "8,0":"Ж","8,1":"А","8,2":"Н","8,3":"Т","8,4":"А","8,5":"Й",
-    // 6. ОРСК (10,0-10,3)
-    "10,0":"О","10,1":"Р","10,2":"С","10,3":"К",
-    // 7. ЖАҢАҚАЛА (1,5-1,12)
-    "1,5":"Ж","1,6":"А","1,7":"Ң","1,8":"А","1,9":"Қ","1,10":"А","1,11":"Л","1,12":"А",
-    // 8. СПЕРАНСКИЙ (3,5-3,13)
-    "3,5":"С","3,6":"П","3,7":"Е","3,8":"Р","3,9":"А","3,10":"Н","3,11":"С","3,12":"К","3,13":"И","3,14":"Й",
-    // 9. ЖӘҢГІР (5,5-5,10)
-    "5,5":"Ж","5,6":"Ә","5,7":"Ң","5,8":"Г","5,9":"І","5,10":"Р",
-    // 10. ЖАҢАЕЛЕК (7,5-7,12)
-    "7,5":"Ж","7,6":"А","7,7":"Ң","7,8":"А","7,9":"Е","7,10":"Л","7,11":"Е","7,12":"К",
-    // 11. ШОҚАН (9,5-9,9)
-    "9,5":"Ш","9,6":"О","9,7":"Қ","9,8":"А","9,9":"Н",
-    // 12. ОРЫНБОР (11,5-11,11)
-    "11,5":"О","11,6":"Р","11,7":"Ы","11,8":"Н","11,9":"Б","11,10":"О","11,11":"Р",
-    // 13. ҚОҚАН (0,13-4,13) - вертикально
-    "0,13":"Қ","1,13":"О","2,13":"Қ","3,13":"А","4,13":"Н",
-    // 14. ОТАРШЫЛДЫҚ (5,13-12,13) - вертикально
-    "5,13":"О","6,13":"Т","7,13":"А","8,13":"Р","9,13":"Ш","10,13":"Ы","11,13":"Л","12,13":"Д","13,13":"Ы","14,13":"Қ",
-    // 15. ДОСАЙ (12,0-12,4) - горизонтально
-    "12,0":"Д","12,1":"О","12,2":"С","12,3":"А","12,4":"Й"
+    // 6. ОРСК (0,12-0,15) - горизонталь (справа)
+    "0,12":"О","0,13":"Р","0,14":"С","0,15":"К",
+    // 7. ЖАҢАҚАЛА (2,8-2,15) - горизонталь (справа)
+    "2,8":"Ж","2,9":"А","2,10":"Ң","2,11":"А","2,12":"Қ","2,13":"А","2,14":"Л","2,15":"А",
+    // 8. СПЕРАНСКИЙ (4,7-4,16) - горизонталь (справа)
+    "4,7":"С","4,8":"П","4,9":"Е","4,10":"Р","4,11":"А","4,12":"Н","4,13":"С","4,14":"К","4,15":"И","4,16":"Й"
   },
   "nums": {
-    "0,0":1, "2,0":2, "4,0":3, "6,0":4, "8,0":5, "10,0":6, "1,5":7, "3,5":8, 
-    "5,5":9, "7,5":10, "9,5":11, "11,5":12, "0,13":13, "5,13":14, "12,0":15
+    "0,0":1, "2,0":2, "4,0":3, "6,0":4, "8,0":5, "0,12":6, "2,8":7, "4,7":8
   },
   "A": [
     [1, "Сырым «бұзау еті ауызында кеткен» деп сынаған, Кіші жүздің ханы?"],
@@ -246,14 +210,11 @@ const D = {
     [3, "Кенесарының інісі, батыр?"],
     [4, "Есет Көтібарұлы шабуыл жасаған, Жайық бойындағы бекініс?"],
     [5, "Жанқожа 1856 жылы салған бекіністің аты?"],
-    [6, "1822 және 1824 жылғы жарлықтардың авторы?"],
-    [7, "Шыңғыс сұлтанның баласы, қазақтың тұңғыш ғалымы?"]
+    [6, "Есет Көтібарұлы шабуыл жасаған, Жайық бойындағы бекініс?"],
+    [7, "Жанқожа 1856 жылы салған бекіністің аты?"],
+    [8, "1822 және 1824 жылғы жарлықтардың авторы?"]
   ],
-  "D": [
-    [13, "Сырдарияның арғы бетіндегі хандық?"],
-    [14, "Махамбет «Хан емессің, қасқырсың» деген Ішкі Орда ханы?"],
-    [15, "1870 жылғы Маңғыстау көтерілісінің басшысы?"]
-  ]
+  "D": []
 };
 
 let startTime = Date.now();
