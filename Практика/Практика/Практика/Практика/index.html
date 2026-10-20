@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Қазақ көтерілістері — Кроссворд</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --fg:#16181d; --muted:#6b7280;
+  --line:#c9ced6; --cell:#ffffff; --accent:#2563eb; --ok:#dcfce7; --okb:#16a34a;
+  --bad:#fee2e2; --badb:#dc2626; --shadow:0 1px 2px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.06);
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0f1115; --card:#171a21; --fg:#e8eaed; --muted:#9aa3af;
+  --line:#3a4150; --cell:#1f242e; --accent:#60a5fa; --ok:#12351f; --okb:#22c55e;
+  --bad:#3a1414; --badb:#ef4444; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.5);
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));
+  -webkit-text-size-adjust:100%;
+}
+header{max-width:1040px;margin:0 auto 16px}
+h1{font-size:clamp(20px,4vw,28px);margin:0 0 4px;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.layout{max-width:1040px;margin:0 auto;display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:860px){.layout{grid-template-columns:auto minmax(280px,1fr);align-items:start}}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.gridwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+table{border-collapse:separate;border-spacing:0;margin:0 auto}
+td{width:34px;height:34px;padding:0;position:relative}
+td.c{border:1px solid var(--line)}
+td input{
+  width:100%;height:100%;border:0;background:var(--cell);color:var(--fg);
+  text-align:center;font-size:17px;font-weight:600;text-transform:uppercase;
+  padding:0;outline:none;caret-color:var(--accent);border-radius:2px;
+  transition:background .15s,box-shadow .15s;
+}
+td input:focus{box-shadow:inset 0 0 0 2px var(--accent);background:var(--card)}
+td i{position:absolute;top:1px;left:3px;font-size:10px;font-style:normal;font-weight:600;color:var(--muted);pointer-events:none}
+td.ok input{background:var(--ok);box-shadow:inset 0 0 0 1px var(--okb)}
+td.bad input{background:var(--bad);box-shadow:inset 0 0 0 1px var(--badb)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+button{
+  appearance:none;border:1px solid var(--line);background:var(--card);color:var(--fg);
+  padding:9px 16px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;
+  transition:transform .06s,background .15s,border-color .15s;
+}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.97)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.clues h3{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
+.clues h3:not(:first-child){margin-top:18px}
+.clue{display:flex;gap:10px;padding:7px 8px;border-radius:8px;font-size:14.5px;line-height:1.4}
+.clue:hover{background:rgba(127,127,127,.08)}
+.clue b{color:var(--accent);min-width:1.6em;text-align:right;font-variant-numeric:tabular-nums}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  .card{box-shadow:none;border:1px solid #ccc}
+  .toolbar{display:none}
+  td input{background:#fff}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Қазақ көтерілістері</h1>
+  <p class="sub">Тарихи кроссворд · жауаптарды ұяшықтарға толтырыңыз</p>
+</header>
+<div class="layout">
+  <div class="card">
+    <div class="gridwrap"><table id="t"></table></div>
+    <div class="toolbar">
+      <button class="primary" onclick="chk()">Тексеру</button>
+      <button onclick="rev()">Жауаптар</button>
+      <button onclick="clr()">Тазалау</button>
+    </div>
+  </div>
+  <div class="card clues">
+    <h3>Көлденең</h3><div id="a"></div>
+    <h3>Тік</h3><div id="d"></div>
+  </div>
+</div>
+
+<script>
+const D = {
+  "R": 21, 
+  "C": 19,
+  "cells": {
+    "9,1":"Қ","9,2":"А","9,3":"З","9,4":"А","9,5":"Қ",
+    "0,0":"Н","0,1":"Ұ","0,2":"Р","0,3":"А","0,4":"Л","0,5":"Ы",
+    "2,0":"А","2,1":"Қ","2,2":"Б","2,3":"Ұ","2,4":"Л","2,5":"А","2,6":"Қ",
+    "4,0":"А","4,1":"Қ","4,2":"М","4,3":"О","4,4":"Л","4,5":"А",
+    "6,0":"Н","6,1":"А","6,2":"У","6,3":"Р","6,4":"Ы","6,5":"З","6,6":"Б","6,7":"А","6,8":"Й",
+    "8,0":"Ж","8,1":"А","8,2":"Н","8,3":"Т","8,4":"А","8,5":"Й",
+    "10,0":"О","10,1":"Р","10,2":"С","10,3":"К",
+    "12,0":"Ж","12,1":"А","12,2":"Ң","12,3":"А","12,4":"Қ","12,5":"А","12,6":"Л","12,7":"А",
+    "14,0":"С","14,1":"П","14,2":"Е","14,3":"Р","14,4":"А","14,5":"Н","14,6":"С","14,7":"К","14,8":"И","14,9":"Й",
+    "16,0":"Ж","16,1":"Ә","16,2":"Ң","16,3":"Г","16,4":"І","16,5":"Р",
+    "18,0":"Ж","18,1":"А","18,2":"Ң","18,3":"А","18,4":"Е","18,5":"Л","18,6":"Е","18,7":"К",
+    "20,0":"Ш","20,1":"О","20,2":"Қ","20,3":"А","20,4":"Н",
+    "3,8":"О","4,8":"Р","5,8":"Ы","6,8":"Н","7,8":"Б","8,8":"О","9,8":"Р",
+    "0,10":"О","1,10":"Т","2,10":"А","3,10":"Р","4,10":"Ш","5,10":"Ы","6,10":"Л","7,10":"Д","8,10":"Ы","9,10":"Қ",
+    "10,10":"Д","11,10":"О","12,10":"С","13,10":"А","14,10":"Н",
+    "2,12":"Қ","3,12":"О","4,12":"Қ","5,12":"А","6,12":"Н",
+    "5,14":"А","6,14":"Қ","7,14":"М","8,14":"О","9,14":"Л","10,14":"А"
+  },
+  "nums": {
+    "0,0":1, "2,0":2, "4,0":3, "6,0":4, "8,0":5, "10,0":6, "12,0":7, "14,0":8, "16,0":9, "18,0":10, "20,0":11,
+    "3,8":12, "0,10":13, "2,12":14, "5,14":15
+  },
+  "A": [
+    [1, "Сырым «бұзау еті ауызында кеткен» деп сынаған, Кіші жүздің ханы?"],
+    [2, "1838 жылғы 12 шілдедегі Исатай мен Махамбет көтерілісінің шешуші шайқасы өткен өзен?"],
+    [3, "Кенесары хандығының соңғы астанасы болған бекініс?"],
+    [4, "Кенесарының інісі, батыр?"],
+    [5, "Кенесарының өліміне қатысқан қырғыз манабы?"],
+    [6, "Есет Көтібарұлы шабуыл жасаған, Жайық бойындағы бекініс?"],
+    [7, "Жанқожа 1856 жылы салған бекіністің аты?"],
+    [8, "1822 және 1824 жылғы жарлықтардың авторы?"],
+    [9, "Махамбет «Хан емессің, қасқырсың» деген Ішкі Орда ханы?"],
+    [10, "Кенесарыға қарсы салынған шекара шебі?"],
+    [11, "Шыңғыс сұлтанның баласы, қазақтың тұңғыш ғалымы?"]
+  ],
+  "D": [
+    [12, "«Елек қорғанысы» деп аталған шеп?"],
+    [13, "Қазақ жерін «бос жатқан жер» деп жариялаған жүйе?"],
+    [14, "Сырдарияның арғы бетіндегі хандық?"],
+    [15, "1870 жылғы Маңғыстау көтерілісінің басшысы?"]
+  ]
+};
+
+const t=document.getElementById('t');
+for(let r=0;r<D.R;r++){
+  const tr=t.insertRow();
+  for(let c=0;c<D.C;c++){
+    const td=tr.insertCell(), k=r+','+c;
+    if(D.cells[k]){
+      td.className='c';
+      td.innerHTML=(D.nums[k]?'<i>'+D.nums[k]+'</i>':'')+'<input maxlength="1" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" data-a="'+D.cells[k]+'">';
+    }
+  }
+}
+const I=[...document.querySelectorAll('input')];
+I.forEach((inp,idx)=>{
+  inp.addEventListener('input',()=>{
+    inp.value=inp.value.toUpperCase().slice(-1);
+    inp.parentNode.classList.remove('ok','bad');
+    if(inp.value && I[idx+1]) I[idx+1].focus();
+  });
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Backspace' && !inp.value && I[idx-1]){I[idx-1].focus();}
+  });
+});
+function chk(){
+  I.forEach(i=>{
+    const p=i.parentNode;
+    p.classList.remove('ok','bad');
+    if(!i.value) return;
+    p.classList.add(i.value.toUpperCase()===i.dataset.a?'ok':'bad');
+  });
+}
+function rev(){I.forEach(i=>{i.value=i.dataset.a;i.parentNode.classList.remove('bad');i.parentNode.classList.add('ok')})}
+function clr(){I.forEach(i=>{i.value='';i.parentNode.classList.remove('ok','bad')})}
+const f=(l,id)=>document.getElementById(id).innerHTML=l.map(x=>'<div class="clue"><b>'+x[0]+'.</b><span>'+x[1]+'</span></div>').join('');
+f(D.A,'a');f(D.D,'d');
+</script>
+</body>
+</html>
