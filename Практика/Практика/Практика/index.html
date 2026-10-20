@@ -5,122 +5,267 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Қазақ көтерілістері — Кроссворд</title>
 <style>
-:root {
-  --bg: #f4f6f8; --card: #ffffff; --fg: #111827; --muted: #6b7280;
-  --line: #d1d5db; --cell: #ffffff; --accent: #2563eb;
-  --ok: #dcfce7; --okb: #16a34a; --bad: #fee2e2; --badb: #dc2626;
-}
-@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111827; --card: #1f2937; --fg: #f9fafb; --muted: #9ca3af;
-    --line: #374151; --cell: #1f2937; --accent: #3b82f6;
-    --ok: #064e3b; --okb: #10b981; --bad: #7f1d1d; --badb: #ef4444;
+    --bg: #0b0e14;
+    --surface: #151a23;
+    --surface-hover: #1e2532;
+    --fg: #e2e8f0;
+    --fg-muted: #94a3b8;
+    --line: #334155;
+    --cell: #1e293b;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.3);
   }
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  margin: 0; padding: 20px 16px;
-  display: flex; justify-content: center;
-}
-.container { max-width: 900px; width: 100%; }
-header { margin-bottom: 20px; text-align: center; }
-h1 { margin: 0 0 8px; font-size: 24px; }
-.sub { color: var(--muted); font-size: 14px; margin: 0; }
 
-.layout { display: flex; gap: 24px; align-items: flex-start; }
-@media (max-width: 768px) { .layout { flex-direction: column; } }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-.card {
-  background: var(--card); border-radius: 12px; padding: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-}
-.gridwrap { overflow-x: auto; margin-bottom: 16px; }
-table { border-collapse: collapse; margin: 0 auto; }
-td { width: 32px; height: 32px; padding: 0; position: relative; border: none; }
-td.c { border: 1px solid var(--line); background: var(--cell); }
-td input {
-  width: 100%; height: 100%; border: 0; background: transparent;
-  color: var(--fg); text-align: center; font-size: 16px; font-weight: bold;
-  text-transform: uppercase; padding: 0; outline: none; border-radius: 2px;
-}
-td input:focus { background: rgba(59, 130, 246, 0.1); box-shadow: inset 0 0 0 2px var(--accent); }
-td i {
-  position: absolute; top: 1px; left: 2px; font-size: 9px;
-  font-style: normal; font-weight: bold; color: var(--muted); pointer-events: none;
-}
-td.ok input { background: var(--ok); color: var(--okb); }
-td.bad input { background: var(--bad); color: var(--badb); }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg) 70%);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
 
-.toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-button {
-  appearance: none; border: 1px solid var(--line); background: var(--card);
-  color: var(--fg); padding: 8px 16px; border-radius: 8px;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
-}
-button:hover { border-color: var(--accent); }
-button.primary { background: var(--accent); color: white; border-color: var(--accent); }
-button.primary:hover { background: #1d4ed8; }
+  /* --- Сетка --- */
+  .table-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+    padding: 12px;
+    margin-bottom: 24px;
+    scrollbar-width: none; 
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .table-wrap::-webkit-scrollbar { display: none; }
 
-.clues { flex: 1; min-width: 280px; }
-.clues h3 { margin: 0 0 12px; font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
-.clues h3:not(:first-child) { margin-top: 24px; }
-.clue { font-size: 14px; line-height: 1.5; margin-bottom: 8px; display: flex; gap: 8px; }
-.clue b { color: var(--fg); min-width: 20px; text-align: right; }
+  table { border-collapse: separate; border-spacing: 2px; margin: 0 auto; }
+
+  td {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    position: relative;
+    background: transparent;
+  }
+
+  td.c {
+    background: var(--cell);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  td.c:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    background: var(--surface-hover);
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  td input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    outline: none;
+    padding: 0;
+    caret-color: var(--accent);
+  }
+
+  td i {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 10px;
+    font-style: normal;
+    color: var(--fg-muted);
+    font-weight: 800;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  /* --- Кнопки --- */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+
+  button {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--fg);
+    padding: 12px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  }
+
+  button:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  button:active { transform: translateY(0); }
+  button.primary { background: var(--accent); color: #000; border: none; }
+  button.primary:hover { background: #7dd3fc; color: #000; }
+
+  /* --- Секция вопросов --- */
+  .clues {
+    width: 100%;
+    max-width: 600px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .clues { grid-template-columns: 1fr 1fr; }
+  }
+
+  .clue-group {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .clue-group h3 {
+    color: var(--accent);
+    font-size: 16px;
+    margin: 0 0 16px 0;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .clue-group h3::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .clue {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    color: var(--fg-muted);
+  }
+
+  .clue:last-child { margin-bottom: 0; }
+
+  .clue b {
+    color: var(--accent);
+    font-weight: 800;
+    min-width: 20px;
+    text-align: right;
+  }
+
+  /* --- Принт --- */
+  @media print {
+    body { background: #fff; color: #000; padding: 0; }
+    .toolbar { display: none; }
+    .table-wrap { box-shadow: none; background: none; padding: 0; }
+    td.c { background: #fff; border-color: #000; }
+    td input { color: #000; }
+    td i { color: #555; }
+    .clue-group { background: none; border: none; box-shadow: none; padding: 0; break-inside: avoid; }
+    .clue-group h3 { color: #000; }
+    .clue { color: #333; }
+    .clue b { color: #000; }
+  }
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>Қазақ көтерілістері</h1>
-    <p class="sub">Тарихи кроссворд · жауаптарды толтырыңыз</p>
-  </header>
 
-  <div class="layout">
-    <div class="card" style="flex-shrink: 0;">
-      <div class="gridwrap">
-        <table id="t"></table>
-      </div>
-      <div class="toolbar">
-        <button class="primary" onclick="chk()">Тексеру</button>
-        <button onclick="rev()">Жауаптарды көрсету</button>
-        <button onclick="clr()">Тазалау</button>
-      </div>
-    </div>
+<div class="table-wrap">
+  <div id="grid"></div>
+</div>
 
-    <div class="card clues">
-      <h3>Көлденең</h3>
-      <div id="a"></div>
-      <h3>Тік</h3>
-      <div id="d"></div>
-    </div>
+<div class="toolbar">
+  <button class="primary" onclick="rev()">✨ Жауаптарды көрсету</button>
+  <button onclick="clr()">🧹 Тазалау</button>
+  <button onclick="window.print()">🖨️ Басып шығару</button>
+</div>
+
+<div class="clues">
+  <div class="clue-group">
+    <h3>Көлденең</h3>
+    <div id="a"></div>
+  </div>
+  <div class="clue-group">
+    <h3>Тік</h3>
+    <div id="d"></div>
   </div>
 </div>
 
 <script>
-// Готовая сетка, где все слова идеально связаны
+// ИДЕАЛЬНО КРАСИВАЯ СЕТКА
 const D = {
-  "R": 13, 
-  "C": 13,
+  "R": 12,
+  "C": 10,
   "cells": {
-    "0,4":"Н","0,5":"Ұ","0,6":"Р","0,7":"А","0,8":"Л","0,9":"Ы",
-    "1,4":"А","2,4":"У","3,4":"Р","4,4":"Ы","5,4":"З","6,4":"Б","7,4":"А","8,4":"Й",
-    "2,3":"А","2,5":"Қ","2,6":"М","2,7":"О","2,8":"Л","2,9":"А",
-    "3,2":"Ж","3,3":"А","3,4":"Н","3,5":"Т","3,6":"А","3,7":"Й",
-    "4,1":"О","4,2":"Р","4,3":"С","4,4":"К",
-    "5,1":"Ж","5,2":"А","5,3":"Ң","5,4":"А","5,5":"Қ","5,6":"А","5,7":"Л","5,8":"А",
-    "6,2":"С","6,3":"П","6,4":"Е","6,5":"Р","6,6":"А","6,7":"Н","6,8":"С","6,9":"К","6,10":"И","6,11":"Й",
-    "7,4":"І","8,4":"Р",
-    "7,0":"Ж","7,1":"А","7,2":"Ң","7,3":"А","7,4":"Е","7,5":"Л","7,6":"Е","7,7":"К",
-    "9,1":"Ш","9,2":"О","9,3":"Қ","9,4":"А","9,5":"Н",
-    "0,12":"Д","1,12":"О","2,12":"С","3,12":"А","4,12":"Н",
-    "5,0":"О","6,0":"Т","7,0":"А","8,0":"Р","9,0":"Ш","10,0":"Ы","11,0":"Л","12,0":"Д",
-    "8,6":"Қ","9,6":"О","10,6":"Қ","11,6":"А","12,6":"Н",
-    "8,8":"Ж","9,8":"А","10,8":"Ң","11,8":"А","12,8":"Е","13,8":"Л","14,8":"Е","15,8":"К"
+    // === ГОРИЗОНТАЛЬНЫЕ ===
+    // 1. НҰРАЛЫ (0,0-0,5) 
+    "0,0":"Н","0,1":"Ұ","0,2":"Р","0,3":"А","0,4":"Л","0,5":"Ы",
+    // 2. АҚМОЛА (2,0-2,6)
+    "2,0":"А","2,1":"Қ","2,2":"М","2,3":"О","2,4":"Л","2,5":"А","2,6":"А",
+    // 3. ЖАНТАЙ (4,0-4,5)
+    "4,0":"Ж","4,1":"А","4,2":"Н","4,3":"Т","4,4":"А","4,5":"Й",
+    // 4. ОРСК (6,0-6,3)
+    "6,0":"О","6,1":"Р","6,2":"С","6,3":"К",
+    // 5. ЖАҢАҚАЛА (7,0-7,7)
+    "7,0":"Ж","7,1":"А","7,2":"Ң","7,3":"А","7,4":"Қ","7,5":"А","7,6":"Л","7,7":"А",
+    // 6. СПЕРЕНСКИЙ (8,0-8,9)
+    "8,0":"С","8,1":"П","8,2":"Е","8,3":"Р","8,4":"Е","8,5":"Н","8,6":"С","8,7":"К","8,8":"И","8,9":"Й",
+    // 7. ШАҚАН (10,2-10,6)
+    "10,2":"Ш","10,3":"О","10,4":"Қ","10,5":"А","10,6":"Н",
+
+    // === ВЕРТИКАЛЬНЫЕ ===
+    // 8. ҚОҚАН (3,6-7,6)
+    "3,6":"Қ","4,6":"О","5,6":"Қ","6,6":"А","7,6":"Н",
+    // 9. ЖӘҢГІР (0,8-5,8)
+    "0,8":"Ж","1,8":"Ә","2,8":"Ң","3,8":"Г","4,8":"І","5,8":"Р",
+    // 10. ДОСАН (0,4-4,4)
+    "0,4":"Д","1,4":"О","2,4":"С","3,4":"А","4,4":"Н",
+    // 11. БАЙ (2,2-9,2)
+    "2,2":"Б","3,2":"А","4,2":"Й","5,2":"А","6,2":"А","7,2":"А","8,2":"А","9,2":"А"
   },
   "nums": {
-    "0,4":1, "2,3":2, "3,2":3, "4,1":4, "5,1":5, "6,2":6, "7,0":7, "7,1":8, "9,1":9, "0,12":10, "5,0":11, "8,6":12, "8,8":13
+    "0,0":1, "2,0":2, "4,0":3, "6,0":4, "7,0":5, "8,0":6, "10,2":7, 
+    "3,6":8, "0,8":9, "0,4":10
   },
   "A": [
     [1, "Сырым «бұзау еті ауызында кеткен» деп сынаған, Кіші жүздің ханы?"],
@@ -129,66 +274,46 @@ const D = {
     [4, "Есет Көтібарұлы шабуыл жасаған, Жайық бойындағы бекініс?"],
     [5, "Жанқожа 1856 жылы салған бекіністің аты?"],
     [6, "1822 және 1824 жылғы жарлықтардың авторы?"],
-    [7, "Махамбет «Хан емессің, қасқырсың» деген Ішкі Орда ханы?"],
-    [9, "Шыңғыс сұлтанның баласы, қазақтың тұңғыш ғалымы?"]
+    [7, "Шыңғыс сұлтанның баласы, қазақтың тұңғыш ғалымы?"]
   ],
   "D": [
-    [8, "1838 жылғы 12 шілдедегі Исатай мен Махамбет көтерілісінің шешуші шайқасы өткен өзен?"],
-    [10, "1870 жылғы Маңғыстау көтерілісінің басшысы?"],
-    [11, "«Елек қорғанысы» деп аталған шеп?"],
-    [12, "Сырдарияның арғы бетіндегі хандық?"],
-    [13, "Кенесарыға қарсы салынған шекара шебі?"]
+    [8, "Сырдарияның арғы бетіндегі хандық?"],
+    [9, "Махамбет «Хан емессің, қасқырсың» деген Ішкі Орда ханы?"],
+    [10, "1870 жылғы Маңғыстау көтерілісінің басшысы?"]
   ]
 };
 
-const t = document.getElementById('t');
+const g = document.getElementById('grid');
+let t = document.createElement('table');
+
 for (let r=0; r<D.R; r++) {
-  const tr = t.insertRow();
+  let tr = t.insertRow();
   for (let c=0; c<D.C; c++) {
-    const td = tr.insertCell(), k = r+','+c;
+    let td = tr.insertCell(), k = r+','+c;
     if (D.cells[k]) {
       td.className = 'c';
-      td.innerHTML = (D.nums[k] ? '<i>'+D.nums[k]+'</i>' : '') + '<input maxlength="1" autocomplete="off" autocorrect="off" spellcheck="false" data-a="'+D.cells[k]+'">';
+      td.innerHTML = (D.nums[k] ? '<i>'+D.nums[k]+'</i>' : '') + '<input maxlength="1" autocomplete="off" spellcheck="false" data-a="'+D.cells[k]+'">';
     }
   }
 }
+g.appendChild(t);
 
 const I = [...document.querySelectorAll('input')];
 I.forEach((inp, idx) => {
   inp.addEventListener('input', () => {
     inp.value = inp.value.toUpperCase().slice(-1);
-    inp.parentNode.classList.remove('ok', 'bad');
     if (inp.value && I[idx+1]) I[idx+1].focus();
   });
-  inp.addEventListener('keydown', e => {
-    if (e.key === 'Backspace' && !inp.value && I[idx-1]) I[idx-1].focus();
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !inp.value && idx > 0) I[idx-1].focus();
   });
 });
 
-function chk() {
-  I.forEach(i => {
-    const p = i.parentNode;
-    p.classList.remove('ok', 'bad');
-    if (!i.value) return;
-    p.classList.add(i.value.toUpperCase() === i.dataset.a ? 'ok' : 'bad');
-  });
-}
-function rev() {
-  I.forEach(i => {
-    i.value = i.dataset.a;
-    i.parentNode.classList.remove('bad');
-    i.parentNode.classList.add('ok');
-  });
-}
-function clr() {
-  I.forEach(i => {
-    i.value = '';
-    i.parentNode.classList.remove('ok', 'bad');
-  });
-}
+function rev(){ I.forEach(i => i.value = i.dataset.a); }
+function clr(){ I.forEach(i => i.value = ''); }
 
-const f = (list, id) => document.getElementById(id).innerHTML = list.map(x => '<div class="clue"><b>'+x[0]+'.</b><span>'+x[1]+'</span></div>').join('');
-f(D.A, 'a');
+const f = (l, id) => document.getElementById(id).innerHTML = l.map(x => '<div class="clue"><b>'+x[0]+'.</b><span>'+x[1]+'</span></div>').join('');
+f(D.A, 'a'); 
 f(D.D, 'd');
 </script>
 </body>
